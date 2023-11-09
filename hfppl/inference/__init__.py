@@ -7,5 +7,6 @@ This module currently provides the following inference methods:
 * `smc_steer(model, num_beams, num_expansions)`: a without-replacement SMC algorithm that resembles beam search.
 """
 
-from .smc_standard import smc_standard 
+from .smc_standard import smc_standard
+from .smc_standard_mod import smc_standard_mod
 from .smc_steer import smc_steer
