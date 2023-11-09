@@ -65,4 +65,6 @@ async def smc_standard_mod(model, n_particles, ess_threshold=0.5):
             info["diff"] += [avg_weight_minus_prev_avg_weight]
         step_num += 1
     
+    print(info)
+
     return particles, info
