@@ -3,7 +3,7 @@ from ..util import logsumexp
 import numpy as np
 import asyncio
 
-async def smc_standard(model, n_particles, ess_threshold=0.5):
+async def smc_standard_mod(model, n_particles, ess_threshold=0.5):
     """
     Standard sequential Monte Carlo algorithm with multinomial resampling.
     
