@@ -14,10 +14,16 @@ async def smc_standard_mod(model, n_particles, ess_threshold=0.5):
     
     Returns:
         particles (list[hfppl.modeling.Model]): The completed particles after inference.
+        info (dict): Info from evolution of weights.
     """
     particles = [copy.deepcopy(model) for _ in range(n_particles)]
     # weights, in log space
     weights = [0.0 for _ in range(n_particles)]
+
+    info = {
+        'averages' : [],
+        'diff' : [np.nan]
+    }
     
     step_num = 1
     prev_avg_weight = 0
@@ -38,6 +44,8 @@ async def smc_standard_mod(model, n_particles, ess_threshold=0.5):
         avg_weight = total_weight - np.log(n_particles)
         print(f"│ Average weight: {avg_weight:.4f}")
         
+        info["averages"] += [avg_weight]
+        
         # Resample if necessary
         if -logsumexp(weights_normalized * 2) < np.log(ess_threshold) + np.log(n_particles):
             # Alternative implementation uses a multinomial distribution and only makes n-1 copies, reusing existing one, but fine for now
@@ -51,7 +59,10 @@ async def smc_standard_mod(model, n_particles, ess_threshold=0.5):
             print("└╼")
         # Print the diff avg weight (biased (over)estimator of marginalizing constant)
         if step_num > 1:
-            print(f"{avg_weight - prev_avg_weight =:.4f}")
+            avg_weight_minus_prev_avg_weight = avg_weight - prev_avg_weight
+            print(f"{avg_weight_minus_prev_avg_weight =:.4f}")
             prev_avg_weight = avg_weight
+            info["diff"] += [avg_weight_minus_prev_avg_weight]
         step_num += 1
-    return particles
+    
+    return particles, info
